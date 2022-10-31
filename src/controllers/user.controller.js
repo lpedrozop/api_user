@@ -55,3 +55,21 @@ export const create_user = async (req, res) => {
 
     }
 }
+
+export const login_c = async (req, res) =>{
+
+    try {
+        conectar.query('SELECT id,nombre,apellido,correo FROM user WHERE correo = ?', [req.params.id], async (error, rows) => {
+
+            if (rows.length <= 0) {
+                return res.status(404).json({
+                    message: 'Usuario no existe'
+                })
+            }
+            res.json(rows[0])
+        })
+    }catch (error) {
+        return res.status(500).json({message: 'Error de conexión'})
+    }
+}
+
