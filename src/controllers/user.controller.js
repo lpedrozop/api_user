@@ -35,12 +35,12 @@ export const create_user = async (req, res) => {
         conectar.query('SELECT id FROM user WHERE id = ?', [id], async (error, resulti) => {
 
                 if (resulti.length > 0) {
-                    return res.status(401).json({
+                    return res.status(201).json({
                         message: 'El ID ya se encuentra registrado'})
                 }
 
                 if (resultc.length > 0){
-                return res.status(401).json({
+                return res.status(201).json({
                         message: 'El correo ya se encuentra registrado'})
                 }
 
