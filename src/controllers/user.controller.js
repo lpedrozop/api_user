@@ -7,9 +7,9 @@ export const login = (req, res) => {
 
         if(correo === ""|| password === ""){
 
-            console.log('verifique los datos del formulario')
+            console.log('Debe rellenar todos los campos')
             return res.status(201).json({
-                message: 'Verifique los datos del formulario'})
+                message: 'Debe rellenar todos los campos'})
 
         }
 
@@ -17,8 +17,10 @@ export const login = (req, res) => {
             conectar.query('SELECT * FROM user WHERE correo = ?', [correo], async (error, result) => {
 
                 if (result.length > 0 && (await compare(password, result[0].password))) {
-                    conectar.query('SELECT id,nombre,apellido,correo FROM user WHERE correo = ?', [correo], async (error, rows) => {
-                        res.json(rows[0])
+                    conectar.query('SELECT id,nombre,apellido,correo,celular,dirreccion,cod_pos,pais,departamento,ciudad  FROM user WHERE correo = ?', [correo], async (error, rows) => {
+                        res.status(201).json({
+                            message:'Sesion iniciada'
+                        })
                     })
                 }
                 if (result.length === 0 || !(await compare(password, result[0].password))) {
@@ -27,9 +29,9 @@ export const login = (req, res) => {
             })
         }
         else{
-            console.log('verifique los datos del formulario')
+            console.log('Debe rellenar todos los campos')
             return res.status(201).json({
-                message: 'Verifique los datos del formulario'})
+                message: 'Debe rellenar todos los campos'})
         }
 
     } catch (error) {
@@ -40,40 +42,40 @@ export const login = (req, res) => {
 export const create_user = async (req, res) => {
 
     try {
-        const {id, nombre, apellido, correo, password, tipo_u} = req.body
+        const {id, nombre, apellido, correo, password} = req.body
 
-        console.log(id, nombre, apellido, correo, password, tipo_u)
+        console.log(id, nombre, apellido, correo, password)
 
-        if(id === "" || nombre === ""|| apellido === ""|| correo === ""|| password === ""|| tipo_u=== ""){
+        if(id === "" || nombre === ""|| apellido === ""|| correo === ""|| password === ""){
 
-            console.log('verifique los datos del formulario')
+            console.log('Debe rellenar todos los campos')
                        return res.status(201).json({
-                    message: 'Verifique los datos del formulario'})
+                    message: 'Debe rellenar todos los campos'})
 
         }
-        if(id !== "" || nombre !== "" || apellido !== "" || correo !== "" || password !== "" || tipo_u!== ""){
+        if(id !== "" || nombre !== "" || apellido !== "" || correo !== "" || password !== ""){
         const passwordHash = await encrypt(password)
             conectar.query('SELECT correo FROM user WHERE correo = ?', [correo], async (error, resultc) => {
             conectar.query('SELECT id FROM user WHERE id = ?', [id], async (error, resulti) => {
 
                 if (resulti.length > 0) {
 
-                    console.log('Id registrado')
+                    console.log('La identificacion ya se encuentra registrada')
                     return res.status(201).json({
-                        message: 'El ID ya se encuentra registrado'})
+                        message: 'La identificacion ya se encuentra registrada'})
                 }
 
                 if (resultc.length > 0){
 
-                    console.log('Correo registrado')
+                    console.log('El correo ya se encuentra registrado')
                 return res.status(201).json({
                         message: 'El correo ya se encuentra registrado'})
                 }
 
                 else {
-                 conectar.query('INSERT INTO user (id,nombre,apellido,correo,password,tipo_u) VALUES (?,?,?,?,?,?)', [id, nombre, apellido, correo, passwordHash, tipo_u])
+                 conectar.query('INSERT INTO user (id,nombre,apellido,correo,password,tipo_u) VALUES (?,?,?,?,?,"USUARIO")', [id, nombre, apellido, correo, passwordHash])
 
-                    console.log('Usuario creado')
+                    console.log('Usuario creado con éxito')
                     return res.status(201).json({
                         message: 'Usuario creado con éxito'})
                 }
@@ -89,4 +91,3 @@ export const create_user = async (req, res) => {
 
     }
 }
-
