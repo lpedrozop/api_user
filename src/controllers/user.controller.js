@@ -17,10 +17,8 @@ export const login = (req, res) => {
             conectar.query('SELECT * FROM user WHERE correo = ?', [correo], async (error, result) => {
 
                 if (result.length > 0 && (await compare(password, result[0].password))) {
-                    conectar.query('SELECT id,nombre,apellido,correo,celular,dirreccion,cod_pos,pais,departamento,ciudad  FROM user WHERE correo = ?', [correo], async (error, rows) => {
-                        res.status(201).json({
-                            message:'Sesion iniciada'
-                        })
+                    conectar.query('SELECT id,nombre,apellido,correo,tipo_u,celular,direccion,cod_pos,pais,departamento,ciudad  FROM user WHERE correo = ?', [correo], async (error, rows) => {
+                       res.status(201).json(rows[0])
                     })
                 }
                 if (result.length === 0 || !(await compare(password, result[0].password))) {
